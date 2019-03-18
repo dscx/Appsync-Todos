@@ -5,6 +5,7 @@ import "./App.css";
 import gql from "graphql-tag";
 import { graphql, compose } from "react-apollo";
 import { graphqlMutation } from "aws-appsync-react";
+import { buildSubscription } from "aws-appsync";
 
 const ListTodos = gql`
   query listTodos {
@@ -28,8 +29,23 @@ const CreateTodo = gql`
   }
 `;
 
+const SubscribeTodos = gql`
+  subscription {
+    onCreateTodo {
+      id
+      title
+      completed
+    }
+  }
+`;
+
 class App extends Component {
   state = { todo: "" };
+
+  componentDidMount() {
+    this.props.subscribeToMore(buildSubscription(SubscribeTodos, ListTodos));
+  }
+
   addTodo = () => {
     if (this.state.todo === "") return;
     const todo = {
@@ -65,7 +81,8 @@ export default compose(
       fetchPolicy: "cache-and-networkd"
     },
     props: props => ({
-      todos: props.data.listTodos ? props.data.listTodos.items : []
+      todos: props.data.listTodos ? props.data.listTodos.items : [],
+      subscribeToMore: props.data.subscribeToMore
     })
   })
 )(App);
