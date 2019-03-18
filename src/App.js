@@ -1,6 +1,3 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
 import React, { Component } from "react";
 import logo from "./logo.svg";
 import "./App.css";
@@ -21,6 +18,16 @@ const ListTodos = gql`
   }
 `;
 
+const CreateTodo = gql`
+  mutation($title: String!, $completed: Boolean) {
+    createTodo(input: { title: $title, completed: $completed }) {
+      id
+      title
+      completed
+    }
+  }
+`;
+
 class App extends Component {
   state = { todo: "" };
   addTodo = () => {
@@ -36,20 +43,13 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <input
+          onChange={e => this.setState({ todo: e.target.value })}
+          value={this.state.todo}
+          placeholder="Todo Name"
+        />
+        <button onClick={this.addTodo}>Add Todo</button>
+
         {this.props.todos.map((item, i) => (
           <p key={i}> {item.title} </p>
         ))}
@@ -58,8 +58,8 @@ class App extends Component {
   }
 }
 
-export default App;
 export default compose(
+  graphqlMutation(CreateTodo, ListTodos, "Todo"),
   graphql(ListTodos, {
     options: {
       fetchPolicy: "cache-and-networkd"
