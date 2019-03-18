@@ -6,6 +6,7 @@ import { graphql, compose } from "react-apollo";
 import { graphqlMutation } from "aws-appsync-react";
 import { buildSubscription } from "aws-appsync";
 import List from "@material-ui/core/List";
+
 import Todo from "./Todo";
 
 const ListTodos = gql`
@@ -46,12 +47,12 @@ const SubscribeTodos = gql`
       id
       title
       completed
-    },
+    }
     onUpdateTodo {
       id
       title
       completed
-    },
+    }
   }
 `;
 
@@ -79,12 +80,6 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <input
-          onChange={e => this.setState({ todo: e.target.value })}
-          value={this.state.todo}
-          placeholder="Todo Name"
-        />
-        <button onClick={this.addTodo}>Add Todo</button>
         <List dense>
           {this.props.todos.map(item => (
             <Todo
@@ -96,6 +91,17 @@ class App extends Component {
             />
           ))}
         </List>
+        <input
+          value={this.state.todo}
+          onChange={e => this.setState({ todo: e.target.value })}
+          placeholder="Todo Name"
+        />
+        <button
+          style={{ marginTop: 20, marginLeft: 20 }}
+          onClick={this.addTodo}
+        >
+          Add
+        </button>
       </div>
     );
   }
@@ -110,7 +116,7 @@ export default compose(
     },
     props: props => ({
       todos: props.data.listTodos ? props.data.listTodos.items : [],
-      subscribeToMore: props.data.subscribeToMore,
+      subscribeToMore: props.data.subscribeToMore
     })
   })
 )(App);
