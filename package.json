@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^3.9.2",
     "aws-appsync": "^1.7.2",
     "aws-appsync-react": "^1.2.7",
     "graphql-tag": "^2.10.1",
